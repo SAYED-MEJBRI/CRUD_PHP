@@ -1,129 +1,120 @@
 <?php
 require 'database.php';
-// var_dump($_SERVER["REQUEST_METHOD"]);
-// var_dump($_POST);
-// var_dump(($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST)));
+$id = null;
+if (!empty($_GET['id'])) {
+    $id = $_REQUEST['id'];
+}
+if (null == $id) {
+    header("Location: index.php");
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST)) {
-     //on initialise nos messages d'erreurs;
-    $nameError = '';
-    $firstnameError = '';
-    $ageError = '';
-    $telError = '';
-    $emailError = '';
-    $paysError = '';
-    $commentError = '';
-    $metierError = '';
-    $urlError = '';
-    // on recupère nos valeurs
-    $name = htmlentities(trim($_POST['name']));
-    $firstname = htmlentities(trim($_POST['firstname']));
-    $age = htmlentities(trim($_POST['age']));
-    $tel = htmlentities(trim($_POST['tel']));
-    $email = htmlentities(trim($_POST['email']));
-    $pays = htmlentities(trim($_POST['pays']));
-    $comment = htmlentities(trim($_POST['comment']));
-    $metier = htmlentities(trim($_POST['metier']));
-    $url = htmlentities(trim($_POST['url']));
-    // on vérifie nos champs 
+    // on initialise nos erreurs
+    $nameError = null;
+    $firstnameError = null;
+    $ageError = null;
+    $telError = null;
+    $emailError = null;
+    $paysError = null;
+    $commentError = null;
+    $metierError = null;
+    $urlError = null;
+    // On assigne nos valeurs 
+    $name = $_POST['name'];
+    $firstname = $_POST['firstname'];
+    $age = $_POST['age'];
+    $tel = $_POST['tel'];
+    $email = $_POST['email'];
+    $pays = $_POST['pays'];
+    $comment = $_POST['comment'];
+    $metier = $_POST['metier'];
+    $url = $_POST['url'];
+    // On verifie que les champs sont remplis
     $valid = true;
     if (empty($name)) {
         $nameError = 'Please enter Name';
         $valid = false;
-     
-    } else if (!preg_match("/^[a-zA-Z ]*$/", $name)) {
-        $nameError = "Only letters and white space allowed";
     }
     if (empty($firstname)) {
         $firstnameError = 'Please enter firstname';
         $valid = false;
-      
-    } else if (!preg_match("/^[a-zA-Z ]*$/", $name)) {
-        $nameError = "Only letters and white space allowed";
     }
     if (empty($email)) {
         $emailError = 'Please enter Email Address';
         $valid = false;
-        
     } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $emailError = 'Please enter a valid Email Address';
         $valid = false;
-        
     }
     if (empty($age)) {
         $ageError = 'Please enter your age';
         $valid = false;
-        
     }
     if (empty($tel)) {
         $telError = 'Please enter phone';
         $valid = false;
-      
-    } else if (!preg_match("#^0[1-68]([-. ]?[0-9]{2}){4}$#", $tel)) {
-        $telError = 'Please enter a valid phone';
-        $valid = false;
-        
     }
     if (!isset($pays)) {
         $paysError = 'Please select a country';
         $valid = false;
-       
     }
     if (empty($comment)) {
         $commentError = 'Please enter a description';
         $valid = false;
-       
     }
-    if (empty($metier)) {
+    if (!isset($metier)) {
         $metierError = 'Please select a job';
         $valid = false;
-      
     }
     if (empty($url)) {
         $urlError = 'Please enter website url';
         $valid = false;
-       
-    } else if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $url)) {
-        $urlError = 'Enter a valid url';
-        $valid = false;
- 
-    } // si les données sont présentes et bonnes, on se connecte à la base 
-    var_dump(empty($name));
-    var_dump(empty($firstname));
-    var_dump(empty($email));
-    var_dump(!filter_var($email, FILTER_VALIDATE_EMAIL));
-    var_dump(empty($age));
-    var_dump(!preg_match("#^0[1-68]([-. ]?[0-9]{2}){4}$#", $tel));
-    var_dump(empty($tel));
-    var_dump(!isset($pays));
-    var_dump(empty($comment));
-    var_dump(empty($metier));
-    var_dump(empty($url));
-    var_dump(!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $url));
-    var_dump($valid);
+    } // mise à jour des donnés
     if ($valid) {
         $pdo = Database::connect();
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $sql = "INSERT INTO crud_table (name,firstname,age,tel, email, pays,comment, metier,url) values(?, ?, ?, ? , ? , ? , ? , ?, ?)";
+
+        $sql = "UPDATE crud_table SET name = ?,firstname = ?,age = ?,tel = ?, email = ?, pays = ?, comment = ?, metier = ?, url = ? WHERE id = ?";
         $q = $pdo->prepare($sql);
-        $q->execute(array($name, $firstname, $age, $tel, $email, $pays, $comment, $metier, $url));
+        $q->execute(array($name, $firstname, $age, $tel, $email, $pays, $comment, $metier, $url, $id));
         Database::disconnect();
         header("Location: index.php");
     }
+} else {
+
+    $pdo = Database::connect();
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $sql = "SELECT * FROM crud_table where id = ?";
+    $q = $pdo->prepare($sql);
+    $q->execute(array($id));
+    $data = $q->fetch(PDO::FETCH_ASSOC);
+    $name = $data['name'];
+    $firstname = $data['firstname'];
+    $age = $data['age'];
+    $tel = $data['tel'];
+    $email = $data['email'];
+    $pays = $data['pays'];
+    $comment = $data['comment'];
+    $metier = $data['metier'];
+    $url = $data['url'];
+    Database::disconnect();
 }
+
 ?>
+
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Crud</title>
+    <title>Crud-Update</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
-
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        data-wp-preserve="%3Cscript%20src%3D%22js%2Fbootstrap.js%22%3E%3C%2Fscript%3E" data-mce-resize="false"
+        data-mce-placeholder="1" class="mce-object" width="20" height="20" alt="<script>" title="<script>" />
 
 </head>
 
 <body>
-
 
 
     <br />
@@ -133,14 +124,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST)) {
         <div class="row">
 
             <br />
-            <h3>Ajouter un contact</h3>
+            <h3>Modifier un contact</h3>
             <p>
 
         </div>
         <p>
 
             <br />
-        <form method="POST" action="add.php">
+        <form method="post" action="update.php?id=<?php echo $id; ?>">
 
             <br />
             <div class="control-group <?php echo !empty($nameError) ? 'error' : ''; ?>">
@@ -187,7 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST)) {
 
                 <br />
                 <div class="controls">
-                    <input type="date" name="age" value="<?php echo !empty($age) ? $age : ''; ?>">
+                    <input type="number" name="age" value="<?php echo !empty($age) ? $age : ''; ?>">
                     <?php if (!empty($ageError)): ?>
                         <span class="help-inline">
                             <?php echo $ageError; ?>
@@ -228,7 +219,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST)) {
 
                 <br />
                 <div class="controls">
-                    <input name="tel" type="text" placeholder="Telephone" value="<?php echo !empty($tel) ? $tel : ''; ?>">
+                    <input name="tel" type="text" placeholder="Telephone"
+                        value="<?php echo !empty($tel) ? $tel : ''; ?>">
                     <?php if (!empty($telError)): ?>
                         <span class="help-inline">
                             <?php echo $telError; ?>
