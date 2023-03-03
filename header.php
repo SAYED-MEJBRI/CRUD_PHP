@@ -5,14 +5,11 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Crud en php</title>
 
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/responsive.css" rel="stylesheet">
-    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-        data-wp-preserve="%3Cscript%20src%3D%22js%2Fbootstrap.js%22%3E%3C%2Fscript%3E" data-mce-resize="false"
-        data-mce-placeholder="1" class="mce-object" width="20" height="20" alt="<script>" title="<script>" />
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="dashboard">
+  
+    <!-- <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+ 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 </head>
 
 <body>
